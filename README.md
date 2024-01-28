@@ -47,7 +47,7 @@ Ensure that your usage complies with YouTube's terms of service and monitor your
 
 ## License
 
-[MIT License]([LICENSE.md](https://github.com/payam59/YouTube-Comment-Fetcher/blob/main/LICENSE))
+[MIT License](https://github.com/payam59/YouTube-Comment-Fetcher/blob/main/LICENSE)
 
 ## Contributions
 
