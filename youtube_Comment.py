@@ -57,8 +57,7 @@ def get_video_comments(youtube, video_id):
 def main():
     parser = argparse.ArgumentParser(description='YouTube Comments and Replies Fetcher')
     parser.add_argument('video_id', help='ID of the YouTube video for which to fetch comments and replies')
-    parser.add_argument('--apikey', help='Your YouTube Data API v3 key', 
-                        default='')
+    parser.add_argument('--apikey', help='Your YouTube Data API v3 key', default='')
     parser.add_argument('output_file', help='File to write the comments and replies to')
 
     args = parser.parse_args()
