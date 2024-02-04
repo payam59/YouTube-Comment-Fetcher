@@ -15,7 +15,7 @@ cd YouTube-Comment-Fetcher
 2. Install Dependencies:
 This tool requires `google-api-python-client`. You can install it using pip:
 
-pip install --upgrade google-api-python-client
+         pip install --upgrade google-api-python-client
 
 
 3. API Key:
@@ -29,23 +29,24 @@ You need a YouTube Data API v3 key to use this tool. Follow these steps to obtai
 
 Run the script from the command line, providing the YouTube video URLS and the output path. You can also specify your API key if you don't want to use the default one.
 
-python youtube_comment_fetcher.py [OUTPUT_PATH] --apikey [YOUR_API_KEY]
+      python youtube_comment_fetcher.py [OUTPUT_PATH] --apikey [YOUR_API_KEY]
 
 - `OUTPUT_PATH`: Replace this with the path where the output files will be saved.
 - `YOUR_API_KEY` (optional): Use this if you want to specify a different API key.
 
 Example:
-python youtube_comment_fetcher.py D:\OutputFolder --apikey yourapikey
+
+      python youtube_comment_fetcher.py D:\OutputFolder --apikey yourapikey
 
 When prompted, 
 
-         Enter the YouTube video URLs separated by commas:
+      Enter the YouTube video URLs separated by commas:
 
 enter the YouTube video URLs separated by commas.
    
    Like:                   
                
-               https://www.youtube.com/watch?v=yS_eLn36tL0,https://www.youtube.com/watch?v=OnjX0O9dPMc
+      https://www.youtube.com/watch?v=yS_eLn36tL0,https://www.youtube.com/watch?v=OnjX0O9dPMc
 
 The script will fetch comments and replies for each video and save them as separate files in the specified `OUTPUT_PATH`.
 
