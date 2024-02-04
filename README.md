@@ -39,10 +39,13 @@ python youtube_comment_fetcher.py D:\OutputFolder --apikey yourapikey
 
 When prompted, 
 
-         ### ***Enter the YouTube video URLs separated by commas:***
+         Enter the YouTube video URLs separated by commas:
 
 enter the YouTube video URLs separated by commas.
-   Like: https://www.youtube.com/watch?v=yS_eLn36tL0,https://www.youtube.com/watch?v=OnjX0O9dPMc
+   
+   Like:                   
+               
+               https://www.youtube.com/watch?v=yS_eLn36tL0,https://www.youtube.com/watch?v=OnjX0O9dPMc
 
 The script will fetch comments and replies for each video and save them as separate files in the specified `OUTPUT_PATH`.
 
