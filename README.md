@@ -37,7 +37,7 @@ python youtube_comment_fetcher.py [OUTPUT_PATH] --apikey [YOUR_API_KEY]
 Example:
 python youtube_comment_fetcher.py D:\OutputFolder --apikey yourapikey
 
-When prompted, <font color="red">Enter the YouTube video URLs separated by commas:</font>
+When prompted, <span style="color:red">Enter the YouTube video URLs separated by commas:</span>
 
 enter the YouTube video URLs separated by commas.
    Like: https://www.youtube.com/watch?v=yS_eLn36tL0,https://www.youtube.com/watch?v=OnjX0O9dPMc
