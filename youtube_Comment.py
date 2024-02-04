@@ -2,6 +2,8 @@ import argparse
 from googleapiclient.discovery import build
 import os
 import re
+from urllib.parse import urlparse, parse_qs
+from googleapiclient.errors import HttpError
 
 # Function to get comment replies
 def get_comment_replies(youtube, parent_id):
@@ -27,6 +29,13 @@ def get_comment_replies(youtube, parent_id):
 
     return replies
 
+
+# Function to check if comments are disabled for a video
+def are_comments_disabled(video_info):
+    if 'status' in video_info:
+        return video_info['status'].get('embeddable', True) is False or video_info['status'].get('publicStatsViewable', True) is False
+    return False
+ 
 # Function to get comments
 def get_video_comments(youtube, video_id):
     comments = []
@@ -61,47 +70,84 @@ def sanitize_filename(filename):
     # Remove invalid characters using a regular expression
     return re.sub(r'[\/:*?"<>|]', '_', filename)
 
-
 def main():
     parser = argparse.ArgumentParser(description='YouTube Comments and Replies Fetcher')
-    parser.add_argument('video_id', help='ID of the YouTube video for which to fetch comments and replies')
+    parser.add_argument('output_path', help='Path where the output files will be saved')
     parser.add_argument('--apikey', help='Your YouTube Data API v3 key', 
-                        default='Your_API_Key')
-    parser.add_argument('output_path', help='Path where the output file will be saved')
+                        default='YOUR_KEY')
+
 
     args = parser.parse_args()
+
+    # Ask the user for the YouTube video URLs separated by commas
+    video_links = input('Enter the YouTube video URLs separated by commas: ')
+
+    # Use a regular expression to extract video IDs from links
+    video_ids = []
+    for link in video_links.split(','):
+        url_parsed = urlparse(link)
+        video_id_match = re.search(r'(?:v=|be/)([^\?&]+)', url_parsed.path)
+        if video_id_match:
+            video_ids.append(video_id_match.group(1))
+        else:
+            # Try to extract video ID from query parameters if available
+            query_params = parse_qs(url_parsed.query)
+            video_id = query_params.get('v')
+            if video_id:
+                video_ids.append(video_id[0])
+            else:
+                print(f'Invalid YouTube video link: {link}')
+                continue
 
     # Build a resource object
     youtube = build('youtube', 'v3', developerKey=args.apikey)
 
-    # Fetch video details to get the video title
-    video_response = youtube.videos().list(
-        part='snippet',
-        id=args.video_id
-    ).execute()
+    for video_id in video_ids:
+        try:
+            # Fetch video details to get the video title
+            video_response = youtube.videos().list(
+                part='snippet,status',
+                id=video_id
+            ).execute()
 
-    if 'items' in video_response:
-        video_title = video_response['items'][0]['snippet']['title']
-    else:
-        print('Video not found.')
-        return
+            if 'items' in video_response:
+                video_info = video_response['items'][0]
+                video_title = video_info['snippet']['title']
 
-    sanitized_video_title = sanitize_filename(video_title)
-    # Generate the output file name based on the video title
-    output_file_name = f"{sanitized_video_title}.txt"
-    output_file_path = os.path.join(args.output_path, output_file_name)
+                # Check if comments are disabled
+                if are_comments_disabled(video_info):
+                    print(f'Comments for video {video_id} are disabled.')
+                    continue
+            else:
+                print(f'Video {video_id} not found.')
+                continue
 
-    # Fetch comments and replies
-    video_comments = get_video_comments(youtube, args.video_id)
+            # Sanitize the video title to remove invalid characters
+            sanitized_video_title = sanitize_filename(video_title)
 
-    # Write comments and replies to the generated file
-    with open(output_file_path, 'w', encoding='utf-8') as file:
-        for comment in video_comments:
-            file.write(comment + '\n')
+            # Generate the output file name based on the sanitized video title
+            output_file_name = f"{sanitized_video_title}.txt"
+            output_file_path = os.path.join(args.output_path, output_file_name)
 
-    # Print status update
-    print(f'Total comments and replies fetched: {len(video_comments)}')
-    print(f'Comments and replies saved to: {output_file_path}')
+            try:
+                # Fetch comments and replies
+                video_comments = get_video_comments(youtube, video_id)
+
+                # Write comments and replies to the generated file
+                with open(output_file_path, 'w', encoding='utf-8') as file:
+                    for comment in video_comments:
+                        file.write(comment + '\n')
+
+                # Print status update for each video
+                print(f'Total comments and replies fetched for video {video_id}: {len(video_comments)}')
+                print(f'Comments and replies saved to: {output_file_path}')
+            except HttpError as e:
+                if 'commentsDisabled' in str(e):
+                    print(f'Comments for video {video_id} are disabled.')
+                else:
+                    raise
+        except Exception as e:
+            print(f'An error occurred for video {video_id}: {str(e)}')
 
 if __name__ == "__main__":
     main()
