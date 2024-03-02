@@ -19,7 +19,9 @@ def get_comment_replies(youtube, parent_id):
         ).execute()
 
         for item in response['items']:
-            reply = item['snippet']['textDisplay']
+            reply_content = item['snippet']['textDisplay']
+            reply_date = item['snippet']['publishedAt']  # Extract the date of the reply
+            reply = f"{reply_date}: {reply_content}"  # Combine date and content
             replies.append(reply)
 
         next_page_token = response.get('nextPageToken')
@@ -50,7 +52,9 @@ def get_video_comments(youtube, video_id):
         ).execute()
 
         for item in response['items']:
-            top_level_comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
+            top_level_comment_content = item['snippet']['topLevelComment']['snippet']['textDisplay']
+            top_level_comment_date = item['snippet']['topLevelComment']['snippet']['publishedAt']  # Extract the date
+            top_level_comment = f"{top_level_comment_date}: {top_level_comment_content}"  # Combine date and content
             comments.append(top_level_comment)
 
             # Check if there are replies to the comment
@@ -74,7 +78,7 @@ def main():
     parser = argparse.ArgumentParser(description='YouTube Comments and Replies Fetcher')
     parser.add_argument('output_path', help='Path where the output files will be saved')
     parser.add_argument('--apikey', help='Your YouTube Data API v3 key', 
-                        default='YOUR_KEY')
+                        default='Your_KEY')
 
 
     args = parser.parse_args()
